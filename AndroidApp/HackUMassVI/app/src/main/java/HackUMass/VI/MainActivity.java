@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     UsbDeviceConnection connection;
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
-        //@Override
+        @Override
         public void onReceivedData(byte[] arg0) {
             String data = null;
             try {
@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
         @Override
         public void onReceive(Context context, Intent intent) {
+            tvAppend(textView, "Begin");
             if (intent.getAction().equals(ACTION_USB_PERMISSION)) {
                 boolean granted = intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                 if (granted) {
@@ -69,12 +70,15 @@ public class MainActivity extends Activity {
 
                         } else {
                             Log.d("SERIAL", "PORT NOT OPEN");
+                            tvAppend(textView, "PORT NOT OPEN");
                         }
                     } else {
                         Log.d("SERIAL", "PORT IS NULL");
+                        tvAppend(textView, "PORT NOT null");
                     }
                 } else {
                     Log.d("SERIAL", "PERM NOT GRANTED");
+                    tvAppend(textView, "PORT NOT Granted");
                 }
             } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 onClickStart(startButton);
@@ -117,15 +121,18 @@ public class MainActivity extends Activity {
     }
 
     public void onClickStart(View view) {
-
+        tvAppend(textView, "Pressed");
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
+            tvAppend(textView, "Device Exists");
             boolean keep = true;
             for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
                 device = entry.getValue();
                 int deviceVID = device.getVendorId();
-                if (deviceVID == 0x2341)//Arduino Vendor ID
+                tvAppend(textView,String.valueOf(deviceVID));
+                if (deviceVID == 0x1A86)//Arduino Vendor ID
                 {
+                    tvAppend(textView, "Arduino Found");
                     PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(device, pi);
                     keep = false;
