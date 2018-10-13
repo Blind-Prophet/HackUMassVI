@@ -36,6 +36,12 @@ void setup(){
   ring.setBrightness(32);
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
+  red->speed=600;
+  blue->speed=600;
+  green->speed=600;
+  red->timeLeft+=(red->speed + ((rand()%200)-100));
+  blue->timeLeft+=(blue->speed + ((rand()%200)-100));
+  green->timeLeft+=(green->speed + ((rand()%200)-100));
 }
 
 void loop(){
@@ -43,9 +49,6 @@ void loop(){
   static long timeLapsed=0;
   lcd.clearDisplay();
   lcd.setCursor(0,0);
-  red->speed=700;
-  blue->speed=600;
-  green->speed=650;
   red->timeLeft-=(milli-timeLapsed);
   blue->timeLeft-=(milli-timeLapsed);
   green->timeLeft-=(milli-timeLapsed);
@@ -54,21 +57,21 @@ void loop(){
     if((red->currLED)>=ring.numPixels()){
       red->currLED=0;
     }
-    red->timeLeft+=red->speed;
+    red->timeLeft+=(red->speed + ((rand()%200)-100));
   }
   if(blue->timeLeft<=0){
     blue->currLED++;
     if((blue->currLED)>=ring.numPixels()){
       blue->currLED=0;
     }
-    blue->timeLeft+=blue->speed;
+    blue->timeLeft+=(blue->speed + ((rand()%200)-100));
   }
   if(green->timeLeft<=0){
     green->currLED++;
     if((green->currLED)>=ring.numPixels()){
       green->currLED=0;
     }
-    green->timeLeft+=green->speed;
+    green->timeLeft+=(green->speed + ((rand()%200)-100));
   }
   timeLapsed=milli;
   ring.clear();
