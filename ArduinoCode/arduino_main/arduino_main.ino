@@ -26,6 +26,43 @@ Player *red, *green, *blue;
 long speed;
 int numLaps;
 boolean running;
+
+bool parseData(String data){
+  int data_count = 5;
+  int current_data = 0;
+  String parsed_data[data_count];
+  String temp = "";
+  for(int i =0;i<data.length();i++){
+    if(temp==""){
+      //check for bracket
+      if(data[i]!='['){
+        //improper formatting
+        return false;
+      }
+    }else{
+      //check for end bracket
+      if(data[i]==']'){
+        //temp is done
+        parsed_data[current_data] = temp;
+        current_data++;
+        if(current_data==data_count && (i!=data.length()-1)){
+          //if all the data is entered, the string should be done
+          return false;
+        }
+      }else{
+        //add to temp
+        temp = temp + data[i];
+      }
+    }
+  }
+
+  red->playing = (parsed_data[0]=="true");
+  blue->playing = (parsed_data[1]=="true");
+  green->playing = (parsed_data[2]=="true");
+  speed = (parsed_data[3].toInt());
+  numLaps = (parsed_data[4].toInt());
+}
+
 void setup(){
   Serial.begin(9600);
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); // init LCD
@@ -40,9 +77,10 @@ void setup(){
   ring.setBrightness(32);
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
-  speed=475;
-  numLaps=3;
-  running=true;
+  speed=475; //default
+  numLaps=3; //default
+  if(parseData("[true][true][false][400][4]")) running=true; //only run if the string parses properly
+  else running=false;
   red->timeLeft+=(speed + ((rand()%200)-100));
   blue->timeLeft+=(speed + ((rand()%200)-100));
   green->timeLeft+=(speed + ((rand()%200)-100));
@@ -83,23 +121,23 @@ void loop(){
     }
     timeLapsed=milli;
     ring.clear();
-    if(red->currLED==blue->currLED&&red->currLED==green->currLED)ring.setPixelColor(red->currLED, WHITE);
-    else if(red->currLED==blue->currLED){
+    if((red->playing==true&&blue->playing==true&&green->playing==true)&&(red->currLED==blue->currLED&&red->currLED==green->currLED))ring.setPixelColor(red->currLED, WHITE);
+    else if((red->playing==true&&blue->playing==true)&&(red->currLED==blue->currLED)){
       ring.setPixelColor(red->currLED, PURPLE);
-      ring.setPixelColor(green->currLED, GREEN);
+      if(green->playing==true)ring.setPixelColor(green->currLED, GREEN);
     }
-    else if(red->currLED==green->currLED){
+    else if((red->playing==true&&green->playing==true)&&(red->currLED==green->currLED)){
       ring.setPixelColor(red->currLED, YELLOW);
-      ring.setPixelColor(blue->currLED, BLUE);
+      if(green->playing==true)ring.setPixelColor(blue->currLED, BLUE);
     }
-    else if(green->currLED==blue->currLED){
+    else if((green->playing==true&&green->playing==true)&&(green->currLED==blue->currLED)){
       ring.setPixelColor(green->currLED, CIAN);
-      ring.setPixelColor(red->currLED, RED);
+      if(red->playing==true)ring.setPixelColor(red->currLED, RED);
     }
     else{
-      ring.setPixelColor(red->currLED, RED);
-      ring.setPixelColor(green->currLED, GREEN);
-      ring.setPixelColor(blue->currLED, BLUE);
+      if(red->playing==true)ring.setPixelColor(red->currLED, RED);
+      if(green->playing==true)ring.setPixelColor(green->currLED, GREEN);
+      if(blue->playing==true)ring.setPixelColor(blue->currLED, BLUE);
     }
     ring.show();
     if(numLaps==red->lapsCompleted){
