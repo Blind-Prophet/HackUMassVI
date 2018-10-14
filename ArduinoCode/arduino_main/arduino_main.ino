@@ -26,29 +26,37 @@ Player *red, *green, *blue;
 long speed;
 int numLaps;
 boolean running;
-
+boolean finished=false;
 bool parseData(String data){
+  //Serial.print("hello");
   int data_count = 5;
   int current_data = 0;
   String parsed_data[data_count];
   String temp = "";
   for(int i =0;i<data.length();i++){
     if(temp==""){
+      //Serial.print(data[i]);
       //check for bracket
       if(data[i]!='['){
         //improper formatting
         return false;
       }
+      else{
+        temp+=data[i+1];
+        i++;
+      }
     }else{
       //check for end bracket
       if(data[i]==']'){
         //temp is done
+        //Serial.print(temp);
         parsed_data[current_data] = temp;
         current_data++;
         if(current_data==data_count && (i!=data.length()-1)){
           //if all the data is entered, the string should be done
           return false;
         }
+        temp="";
       }else{
         //add to temp
         temp = temp + data[i];
@@ -61,6 +69,7 @@ bool parseData(String data){
   green->playing = (parsed_data[2]=="true");
   speed = (parsed_data[3].toInt());
   numLaps = (parsed_data[4].toInt());
+  return true;
 }
 
 void setup(){
@@ -68,7 +77,9 @@ void setup(){
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); // init LCD
   lcd.clearDisplay();
   lcd.setTextColor(WHITE);
-  lcd.setTextSize(1);
+  //lcd.setTextSize(1);
+  lcd.setCursor(0,0);
+  //Serial.print("AHHHHHHHHHHHHH");
   lcd.display();
   red=new Player();
   green=new Player();
@@ -90,8 +101,6 @@ void loop(){
   if(running){
     long milli=millis();
     static long timeLapsed=0;
-    lcd.clearDisplay();
-    lcd.setCursor(0,0);
     red->timeLeft-=(milli-timeLapsed);
     blue->timeLeft-=(milli-timeLapsed);
     green->timeLeft-=(milli-timeLapsed);
@@ -143,17 +152,20 @@ void loop(){
     if(numLaps==red->lapsCompleted){
       running=false;
       red->winner=true;
+      finished=true;
     }
     else if(numLaps==green->lapsCompleted){
       running=false;
       green->winner=true;
+      finished=true;
     }
     else if(numLaps==blue->lapsCompleted){
       running=false;
       blue->winner=true;
+      finished=true;
     }
   }
-  else{ 
+  else if(finished){ 
     if(blue->winner==true){
       for(int i=0; i<ring.numPixels(); i++){
         ring.setPixelColor(i, BLUE);
