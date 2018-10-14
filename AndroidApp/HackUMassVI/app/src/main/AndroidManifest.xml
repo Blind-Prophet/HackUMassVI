@@ -5,11 +5,11 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Kentucky Derby"
+        android:label="Better Hoof It!"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:label="Kentucky Derby">
+        <activity android:name=".MainActivity" android:label="Better Hoof It!">
 
 
         <intent-filter>

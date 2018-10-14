@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
@@ -26,8 +28,10 @@ import java.util.Map;
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.hariharan.arduinousb.USB_PERMISSION";
     Button startButton, sendButton, clearButton, stopButton;
-    TextView textView;
+    TextView textView, lapText;
     EditText editText;
+    CheckBox horse1, horse2, horse3;
+    RadioButton slowB, mediumB, highB;
     UsbManager usbManager;
     UsbDevice device;
     UsbSerialDevice serialPort;
@@ -102,6 +106,9 @@ public class MainActivity extends Activity {
         stopButton = (Button) findViewById(R.id.buttonStop);
         editText = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.textView);
+        horse1 = (CheckBox) findViewById(R.id.horse1);
+        horse2 = (CheckBox) findViewById(R.id.horse2);
+        horse3 = (CheckBox) findViewById(R.id.horse3);
         setUiEnabled(false);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
@@ -118,10 +125,41 @@ public class MainActivity extends Activity {
         stopButton.setEnabled(bool);
         textView.setEnabled(bool);
 
+        //horse1.setEnabled(bool);
+        //horse2.setEnabled(bool);
+        //horse3.setEnabled(bool);
+
+    }
+
+    public void setUpUI(){
+        View a = findViewById(R.id.buttonSend);
+        a.setVisibility(View.VISIBLE);
+        View b = findViewById(R.id.buttonStop);
+        b.setVisibility(View.VISIBLE);
+        View c = findViewById(R.id.buttonClear);
+        c.setVisibility(View.VISIBLE);
+        View d = findViewById(R.id.textView1);
+        d.setVisibility(View.VISIBLE);
+        View e = findViewById(R.id.horse1);
+        e.setVisibility(View.VISIBLE);
+        View f = findViewById(R.id.horse2);
+        f.setVisibility(View.VISIBLE);
+        View g = findViewById(R.id.horse3);
+        g.setVisibility(View.VISIBLE);
+        View h = findViewById(R.id.textView2);
+        h.setVisibility(View.VISIBLE);
+        View i = findViewById(R.id.speedGroup);
+        i.setVisibility(View.VISIBLE);
+        View j = findViewById(R.id.textView);
+        j.setVisibility(View.VISIBLE);
+        View k = findViewById(R.id.lapText);
+        k.setVisibility(View.VISIBLE);
     }
 
     public void onClickStart(View view) {
         tvAppend(textView, "Pressed");
+//        View b = findViewById(R.id.buttonSend);
+//        b.setVisibility(View.VISIBLE);
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
             tvAppend(textView, "Device Exists");
@@ -133,6 +171,7 @@ public class MainActivity extends Activity {
                 if (deviceVID == 0x1A86)//Arduino Vendor ID
                 {
                     tvAppend(textView, "Arduino Found");
+                    setUpUI();
                     PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                     usbManager.requestPermission(device, pi);
                     keep = false;
@@ -149,10 +188,64 @@ public class MainActivity extends Activity {
 
     }
 
+    // check what horses are in play
+    public boolean isChecked1(){
+        return(horse1.isChecked());
+    }
+    public boolean isChecked2(){
+        return(horse2.isChecked());
+    }
+    public boolean isChecked3(){
+        return(horse3.isChecked());
+    }
+    // transfers horse data into string
+    public String checkAllHorses(){
+        String horses = "";
+        horses = "[" + String.valueOf(isChecked1()) + "]" + "[" + String.valueOf(isChecked2()) + "]" + "[" + String.valueOf(isChecked1()) + "]";
+        return horses;
+    }
+
+    // check what speed
+    public boolean checkLOW(){
+        return(slowB.isChecked());
+    }
+    public boolean checkMED(){
+        return(mediumB.isChecked());
+    }
+    public boolean checkHIGH(){
+        return(highB.isChecked());
+    }
+
+    // put speed into a string
+    public String checkSpeed(){
+        String speed = "";
+        if(checkLOW()){
+            speed = "[" + 600 + "]";
+        }
+        else if(checkMED()){
+            speed = "[" + 475 + "]";
+        }
+        else if(checkHIGH()){
+            speed = "[" + 150 + "]";
+        }
+        else{
+            tvAppend(textView, "No Speed Entered");
+        }
+        return speed;
+    }
+    // check num of laps
+    public String numLaps(){
+        String numL = lapText.getText().toString();
+        String laps = "[" + numL + "]";
+        return laps;
+    }
+    // needs to send string of format String below to arduino for parsing
     public void onClickSend(View view) {
-        String string = editText.getText().toString();
-        serialPort.write(string.getBytes());
-        tvAppend(textView, "\nData Sent : " + string + "\n");
+        //String string = editText.getText().toString();
+        //String string = "[true][false][true][400][5]";
+        String info = checkAllHorses() + checkSpeed() + numLaps();
+        serialPort.write(info.getBytes());
+        tvAppend(textView, "\nData Sent : " + info + "\n");
 
     }
 
