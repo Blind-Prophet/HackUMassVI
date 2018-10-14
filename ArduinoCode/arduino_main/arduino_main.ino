@@ -12,7 +12,7 @@ Adafruit_SSD1306 lcd(-1); // create display object
 #define POT 6
 
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(16, PIN, NEO_GRB + NEO_KHZ800);
-
+//creates player object
 class Player{
   public:
   long speed;
@@ -27,6 +27,7 @@ long speed;
 int numLaps;
 boolean running;
 boolean finished=false;
+//takes in data from phone to set variables
 bool parseData(String data){
   //Serial.print("hello");
   int data_count = 5;
@@ -79,7 +80,6 @@ void setup(){
   lcd.setTextColor(WHITE);
   //lcd.setTextSize(1);
   lcd.setCursor(0,0);
-  //Serial.print("AHHHHHHHHHHHHH");
   lcd.display();
   red=new Player();
   green=new Player();
@@ -88,10 +88,13 @@ void setup(){
   ring.setBrightness(32);
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
+  //defaults first pixel to white to verify connection
+  ring.setPixelColor(0, WHITE);
+  ring.show();
   speed=475; //default
   numLaps=3; //default
-  if(parseData("[true][true][false][400][4]")) running=true; //only run if the string parses properly
-  else running=false;
+//  if(parseData("[true][true][false][400][4]")) running=true; //only run if the string parses properly
+//  else running=false;
   red->timeLeft+=(speed + ((rand()%200)-100));
   blue->timeLeft+=(speed + ((rand()%200)-100));
   green->timeLeft+=(speed + ((rand()%200)-100));
@@ -188,5 +191,16 @@ void loop(){
       }
     }
     ring.clear();
+  }
+  else{
+    String content="";
+    char c;
+    while(Serial.available()){
+      c=Serial.read();
+      content.concat(c);
+    }
+    if(content!=""){
+      running=parseData(content);
+    }
   }
 }
