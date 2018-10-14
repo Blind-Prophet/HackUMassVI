@@ -19,9 +19,13 @@ class Player{
   boolean playing=true;
   int currLED=0;
   long timeLeft;
+  int lapsCompleted=0;
+  boolean winner;
 };
 Player *red, *green, *blue;
-
+long speed;
+int numLaps;
+boolean running;
 void setup(){
   Serial.begin(9600);
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); // init LCD
@@ -36,75 +40,79 @@ void setup(){
   ring.setBrightness(32);
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
-  red->speed=600;
-  blue->speed=600;
-  green->speed=600;
-  red->timeLeft+=(red->speed + ((rand()%200)-100));
-  blue->timeLeft+=(blue->speed + ((rand()%200)-100));
-  green->timeLeft+=(green->speed + ((rand()%200)-100));
+  speed=475;
+  numLaps=5;
+  running=true;
+  red->timeLeft+=(speed + ((rand()%200)-100));
+  blue->timeLeft+=(speed + ((rand()%200)-100));
+  green->timeLeft+=(speed + ((rand()%200)-100));
 }
 
 void loop(){
-  long milli=millis();
-  static long timeLapsed=0;
-  lcd.clearDisplay();
-  lcd.setCursor(0,0);
-  red->timeLeft-=(milli-timeLapsed);
-  blue->timeLeft-=(milli-timeLapsed);
-  green->timeLeft-=(milli-timeLapsed);
-  if(red->timeLeft<=0){
-    red->currLED++;
-    if((red->currLED)>=ring.numPixels()){
-      red->currLED=0;
+  if(running){
+    long milli=millis();
+    static long timeLapsed=0;
+    lcd.clearDisplay();
+    lcd.setCursor(0,0);
+    red->timeLeft-=(milli-timeLapsed);
+    blue->timeLeft-=(milli-timeLapsed);
+    green->timeLeft-=(milli-timeLapsed);
+    if(red->timeLeft<=0){
+      red->currLED++;
+      if((red->currLED)>=ring.numPixels()){
+        red->currLED=0;
+        red->lapsCompleted++;
+      }
+      red->timeLeft+=(speed + ((rand()%200)-100));
     }
-    red->timeLeft+=(red->speed + ((rand()%200)-100));
-  }
-  if(blue->timeLeft<=0){
-    blue->currLED++;
-    if((blue->currLED)>=ring.numPixels()){
-      blue->currLED=0;
+    if(blue->timeLeft<=0){
+      blue->currLED++;
+      if((blue->currLED)>=ring.numPixels()){
+        blue->currLED=0;
+        blue->lapsCompleted++;
+      }
+      blue->timeLeft+=(speed + ((rand()%200)-100));
     }
-    blue->timeLeft+=(blue->speed + ((rand()%200)-100));
-  }
-  if(green->timeLeft<=0){
-    green->currLED++;
-    if((green->currLED)>=ring.numPixels()){
-      green->currLED=0;
+    if(green->timeLeft<=0){
+      green->currLED++;
+      if((green->currLED)>=ring.numPixels()){
+        green->currLED=0;
+        blue->lapsCompleted;
+      }
+      green->timeLeft+=(speed + ((rand()%200)-100));
     }
-    green->timeLeft+=(green->speed + ((rand()%200)-100));
+    timeLapsed=milli;
+    ring.clear();
+    if(red->currLED==blue->currLED&&red->currLED==green->currLED)ring.setPixelColor(red->currLED, WHITE);
+    else if(red->currLED==blue->currLED){
+      ring.setPixelColor(red->currLED, PURPLE);
+      ring.setPixelColor(green->currLED, GREEN);
+    }
+    else if(red->currLED==green->currLED){
+      ring.setPixelColor(red->currLED, YELLOW);
+      ring.setPixelColor(blue->currLED, BLUE);
+    }
+    else if(green->currLED==blue->currLED){
+      ring.setPixelColor(green->currLED, CIAN);
+      ring.setPixelColor(red->currLED, RED);
+    }
+    else{
+      ring.setPixelColor(red->currLED, RED);
+      ring.setPixelColor(green->currLED, GREEN);
+      ring.setPixelColor(blue->currLED, BLUE);
+    }
+    ring.show();
+    if(numLaps==red->lapsCompleted){
+      running=false;
+      red->winner=true;
+    }
+    else if(numLaps==green->lapsCompleted){
+      running=false;
+      green->winner=true;
+    }
+    else if(numLaps==blue->lapsCompleted){
+      running=false;
+      blue->winner=true;
+    }
   }
-  timeLapsed=milli;
-  ring.clear();
-  if(red->currLED==blue->currLED&&red->currLED==green->currLED)ring.setPixelColor(red->currLED, WHITE);
-  else if(red->currLED==blue->currLED){
-    ring.setPixelColor(red->currLED, PURPLE);
-    ring.setPixelColor(green->currLED, GREEN);
-  }
-  else if(red->currLED==green->currLED){
-    ring.setPixelColor(red->currLED, YELLOW);
-    ring.setPixelColor(blue->currLED, BLUE);
-  }
-  else if(green->currLED==blue->currLED){
-    ring.setPixelColor(green->currLED, CIAN);
-    ring.setPixelColor(red->currLED, RED);
-  }
-  else{
-    ring.setPixelColor(red->currLED, RED);
-    ring.setPixelColor(green->currLED, GREEN);
-    ring.setPixelColor(blue->currLED, BLUE);
-  }
-  ring.show();
-//  String content = "";
-//  char character;
-  
-//  while(Serial.available()) {
-//      character = Serial.read();
-//      content.concat(character);
-//  }
-//
-//  if (content != "") {
-//    lcd.print(content);
-//  }
-//
-//  lcd.display();
 }
