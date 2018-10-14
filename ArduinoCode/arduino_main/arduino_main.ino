@@ -35,13 +35,14 @@ bool parseData(String data){
   String parsed_data[data_count];
   String temp = "";
   //Serial.print("    "+data.length());
-  for(int i =0;i<data.length();i++){
+  for(int i =0;i<data.length()-1;i++){
     //Serial.print("    !"+data[i]);
     if(temp==""){
       //Serial.print(data[i]);
       //check for bracket
       if(data[i]!='['){
         //improper formatting
+        //Serial.print("false1");
         return false;
       }
       else{
@@ -55,8 +56,9 @@ bool parseData(String data){
         //Serial.print("     "+temp+"   ayyyyyy");
         parsed_data[current_data] = temp;
         current_data++;
-        if(current_data==data_count && data[i+1]=='!'){
+        if(current_data==data_count && data[i+1]!='!'){
           //if all the data is entered, the string should be done
+          //Serial.print("false2");
           return false;
         }
         temp="";
@@ -68,6 +70,7 @@ bool parseData(String data){
   }
   
   for(int i=0; i<5; i++){
+    //Serial.print(parsed_data[i]+" #");
     if(parsed_data[i]=="")return false;
   }
   red->playing = (parsed_data[0]=="true");
@@ -146,9 +149,9 @@ void loop(){
     }
     else if((red->playing==true&&green->playing==true)&&(red->currLED==green->currLED)){
       ring.setPixelColor(red->currLED, YELLOW);
-      if(green->playing==true)ring.setPixelColor(blue->currLED, BLUE);
+      if(blue->playing==true)ring.setPixelColor(blue->currLED, BLUE);
     }
-    else if((green->playing==true&&green->playing==true)&&(green->currLED==blue->currLED)){
+    else if((green->playing==true&&blue->playing==true)&&(green->currLED==blue->currLED)){
       ring.setPixelColor(green->currLED, CIAN);
       if(red->playing==true)ring.setPixelColor(red->currLED, RED);
     }
@@ -158,17 +161,17 @@ void loop(){
       if(blue->playing==true)ring.setPixelColor(blue->currLED, BLUE);
     }
     ring.show();
-    if(numLaps==red->lapsCompleted){
+    if(red->playing&&numLaps==red->lapsCompleted){
       running=false;
       red->winner=true;
       finished=true;
     }
-    else if(numLaps==green->lapsCompleted){
+    else if(green->playing&&numLaps==green->lapsCompleted){
       running=false;
       green->winner=true;
       finished=true;
     }
-    else if(numLaps==blue->lapsCompleted){
+    else if(blue->playing&&numLaps==blue->lapsCompleted){
       running=false;
       blue->winner=true;
       finished=true;
@@ -208,7 +211,7 @@ void loop(){
     }
     if(c=='!'){
       //Serial.println("    "+content+"  end of string");
-      running=parseData("[true][false][true][400][5]!");
+      running=parseData(content);
       content="";
     }
   }
