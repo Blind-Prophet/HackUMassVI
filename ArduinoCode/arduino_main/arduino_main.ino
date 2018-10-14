@@ -41,7 +41,7 @@ void setup(){
   ring.clear(); // clear all pixels
   ring.show();  // show all pixels
   speed=475;
-  numLaps=5;
+  numLaps=3;
   running=true;
   red->timeLeft+=(speed + ((rand()%200)-100));
   blue->timeLeft+=(speed + ((rand()%200)-100));
@@ -114,5 +114,29 @@ void loop(){
       running=false;
       blue->winner=true;
     }
+  }
+  else{ 
+    if(blue->winner==true){
+      for(int i=0; i<ring.numPixels(); i++){
+        ring.setPixelColor(i, BLUE);
+        ring.show();
+        delay(100);
+      }
+    }
+    else if(red->winner==true){
+      for(int i=0; i<ring.numPixels(); i++){
+        ring.setPixelColor(i, RED);
+        ring.show();
+        delay(100);
+      }
+    }
+    else{
+      for(int i=0; i<ring.numPixels(); i++){
+        ring.setPixelColor(i, GREEN);
+        ring.show();
+        delay(100);
+      }
+    }
+    ring.clear();
   }
 }
