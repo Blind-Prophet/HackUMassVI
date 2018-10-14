@@ -34,7 +34,9 @@ bool parseData(String data){
   int current_data = 0;
   String parsed_data[data_count];
   String temp = "";
+  //Serial.print("    "+data.length());
   for(int i =0;i<data.length();i++){
+    //Serial.print("    !"+data[i]);
     if(temp==""){
       //Serial.print(data[i]);
       //check for bracket
@@ -50,10 +52,10 @@ bool parseData(String data){
       //check for end bracket
       if(data[i]==']'){
         //temp is done
-        //Serial.print(temp);
+        //Serial.print("     "+temp+"   ayyyyyy");
         parsed_data[current_data] = temp;
         current_data++;
-        if(current_data==data_count && (i!=data.length()-1)){
+        if(current_data==data_count && data[i+1]=='!'){
           //if all the data is entered, the string should be done
           return false;
         }
@@ -64,12 +66,16 @@ bool parseData(String data){
       }
     }
   }
-
+  
+  for(int i=0; i<5; i++){
+    if(parsed_data[i]=="")return false;
+  }
   red->playing = (parsed_data[0]=="true");
   blue->playing = (parsed_data[1]=="true");
   green->playing = (parsed_data[2]=="true");
   speed = (parsed_data[3].toInt());
   numLaps = (parsed_data[4].toInt());
+  //Serial.print("      "+String(numLaps)+"   ayyyyy");
   return true;
 }
 
@@ -193,14 +199,17 @@ void loop(){
     ring.clear();
   }
   else{
-    String content="";
+    static String content="";
     char c;
     while(Serial.available()){
       c=Serial.read();
+      //Serial.println(c);
       content.concat(c);
     }
-    if(content!=""){
-      running=parseData(content);
+    if(c=='!'){
+      //Serial.println("    "+content+"  end of string");
+      running=parseData("[true][false][true][400][5]!");
+      content="";
     }
   }
 }
