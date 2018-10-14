@@ -8,6 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:visibility="visible"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <EditText
@@ -23,7 +24,7 @@
 
     <Button
         android:id="@+id/buttonStart"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText"
         android:layout_alignParentStart="true"
@@ -35,34 +36,24 @@
         android:id="@+id/buttonSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
-        android:layout_marginStart="-2dp"
-        android:layout_marginLeft="-2dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/buttonStart"
-        android:layout_toRightOf="@+id/buttonStart"
+        android:layout_below="@+id/speedGroup"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="63dp"
+        android:layout_marginBottom="15dp"
         android:onClick="onClickSend"
         android:text="Send"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/buttonStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
-        android:layout_toEndOf="@+id/buttonSend"
-        android:layout_toRightOf="@+id/buttonSend"
-        android:onClick="onClickStop"
-        android:text="Stop"
         android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonClear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
-        android:layout_toEndOf="@+id/buttonStop"
-        android:layout_toRightOf="@+id/buttonStop"
+        android:layout_below="@+id/speedGroup"
+        android:layout_alignEnd="@+id/buttonSend"
+        android:layout_alignRight="@+id/buttonSend"
+        android:layout_marginTop="62dp"
+        android:layout_marginEnd="-237dp"
+        android:layout_marginRight="-237dp"
         android:onClick="onClickClear"
         android:text="Clear"
         android:visibility="invisible" />
@@ -72,11 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonStart"
-        android:layout_alignStart="@+id/editText"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="7dp"
         android:text="Pick at least one horse:"
         android:visibility="invisible" />
 
@@ -84,26 +71,23 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="126dp"
-        android:layout_marginLeft="126dp"
-        android:layout_marginBottom="221dp"
+        android:layout_above="@+id/speedGroup"
+        android:layout_marginBottom="3dp"
         android:text="Set Track Speed:"
         android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/buttonStart"
         android:layout_alignLeft="@+id/buttonStart"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="-4dp"
-        android:layout_marginLeft="-4dp"
-        android:layout_marginBottom="38dp"
-        android:text="TextView" />
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="61dp"
+        android:text="TextView"
+        android:visibility="invisible" />
 
     <CheckBox
         android:id="@+id/horse1"
@@ -112,46 +96,44 @@
         android:layout_below="@+id/textView1"
         android:layout_alignStart="@+id/textView"
         android:layout_alignLeft="@+id/textView"
-        android:layout_marginStart="-1dp"
-        android:layout_marginLeft="-1dp"
+        android:layout_marginStart="-17dp"
+        android:layout_marginLeft="-17dp"
         android:layout_marginTop="4dp"
-        android:text="Red"
+        android:text="Patoooooooo"
         android:visibility="invisible" />
 
     <CheckBox
         android:id="@+id/horse2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/horse1"
         android:layout_alignStart="@+id/textView"
         android:layout_alignLeft="@+id/textView"
-        android:layout_marginStart="136dp"
-        android:layout_marginLeft="136dp"
-        android:layout_marginTop="-33dp"
-        android:text="Green"
+        android:layout_alignTop="@+id/horse1"
+        android:layout_marginStart="102dp"
+        android:layout_marginLeft="102dp"
+        android:text="Scotts Tots"
         android:visibility="invisible" />
 
     <CheckBox
         android:id="@+id/horse3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/horse2"
         android:layout_alignStart="@+id/buttonStart"
         android:layout_alignLeft="@+id/textView"
-        android:layout_marginStart="289dp"
-        android:layout_marginLeft="292dp"
-        android:layout_marginTop="-33dp"
-        android:text="Blue"
+        android:layout_marginStart="248dp"
+        android:layout_marginLeft="224dp"
+        android:layout_marginTop="-35dp"
+        android:text="Orb"
         android:visibility="invisible" />
 
     <RadioGroup
         android:id="@+id/speedGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
-        android:layout_alignStart="@+id/buttonStart"
-        android:layout_alignLeft="@+id/buttonStart"
-        android:layout_marginTop="-221dp"
+        android:layout_above="@+id/lapText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="4dp"
         android:visibility="invisible">
 
         <RadioButton
@@ -188,20 +170,68 @@
         android:layout_marginBottom="76dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Laps:"
         android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/buttonStart"
-        android:layout_alignLeft="@+id/buttonStart"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/buttonSend"
+        android:layout_below="@+id/speedGroup"
+        android:layout_alignBaseline="@+id/lapText"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="30dp"
+        android:text="Enter Number of Laps:"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/rHorse"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_below="@+id/horse1"
+        android:layout_alignStart="@+id/textView4"
+        android:layout_alignLeft="@+id/textView4"
+        android:src="@drawable/red_horse"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/gHorse"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_below="@+id/horse1"
+        android:layout_alignStart="@+id/horse2"
+        android:layout_alignLeft="@+id/horse2"
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
-        android:layout_marginBottom="103dp"
-        android:text="Enter Number of Laps:"
+        android:src="@drawable/green_horse"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/bHorse"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_below="@+id/horse1"
+        android:layout_alignStart="@+id/horse3"
+        android:layout_alignLeft="@+id/horse3"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:src="@drawable/blue_horse"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/buttonStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText"
+        android:layout_marginStart="41dp"
+        android:layout_marginLeft="41dp"
+        android:layout_marginTop="387dp"
+        android:layout_toEndOf="@+id/buttonSend"
+        android:layout_toRightOf="@+id/buttonSend"
+        android:onClick="onClickStop"
+        android:text="Stop"
         android:visibility="invisible" />
 
 </RelativeLayout>

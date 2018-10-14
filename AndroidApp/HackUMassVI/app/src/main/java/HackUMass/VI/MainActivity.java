@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -28,10 +29,11 @@ import java.util.Map;
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.hariharan.arduinousb.USB_PERMISSION";
     Button startButton, sendButton, clearButton, stopButton;
-    TextView textView, lapText;
-    EditText editText;
+    TextView textView;
+    EditText editText, lapText;
     CheckBox horse1, horse2, horse3;
     RadioButton slowB, mediumB, highB;
+    ImageView rHorse, bHorse, gHorse;
     UsbManager usbManager;
     UsbDevice device;
     UsbSerialDevice serialPort;
@@ -105,10 +107,17 @@ public class MainActivity extends Activity {
         clearButton = (Button) findViewById(R.id.buttonClear);
         stopButton = (Button) findViewById(R.id.buttonStop);
         editText = (EditText) findViewById(R.id.editText);
+        lapText = (EditText) findViewById(R.id.lapText);
         textView = (TextView) findViewById(R.id.textView);
         horse1 = (CheckBox) findViewById(R.id.horse1);
         horse2 = (CheckBox) findViewById(R.id.horse2);
         horse3 = (CheckBox) findViewById(R.id.horse3);
+        slowB = (RadioButton) findViewById(R.id.slowB);
+        mediumB = (RadioButton) findViewById(R.id.mediumB);
+        highB = (RadioButton) findViewById(R.id.highB);
+        rHorse = (ImageView) findViewById(R.id.rHorse);
+        bHorse = (ImageView) findViewById(R.id.bHorse);
+        gHorse = (ImageView) findViewById(R.id.gHorse);
         setUiEnabled(false);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
@@ -120,7 +129,7 @@ public class MainActivity extends Activity {
     }
 
     public void setUiEnabled(boolean bool) {
-        startButton.setEnabled(!bool);
+        //startButton.setEnabled(!bool);
         sendButton.setEnabled(bool);
         stopButton.setEnabled(bool);
         textView.setEnabled(bool);
@@ -130,12 +139,13 @@ public class MainActivity extends Activity {
         //horse3.setEnabled(bool);
 
     }
-
+    // set up UI by making the selections visable
+    // also gets rid if begin
     public void setUpUI(){
         View a = findViewById(R.id.buttonSend);
         a.setVisibility(View.VISIBLE);
-        View b = findViewById(R.id.buttonStop);
-        b.setVisibility(View.VISIBLE);
+        View b = findViewById(R.id.buttonStart);
+        b.setVisibility(View.INVISIBLE);
         View c = findViewById(R.id.buttonClear);
         c.setVisibility(View.VISIBLE);
         View d = findViewById(R.id.textView1);
@@ -150,10 +160,16 @@ public class MainActivity extends Activity {
         h.setVisibility(View.VISIBLE);
         View i = findViewById(R.id.speedGroup);
         i.setVisibility(View.VISIBLE);
-        View j = findViewById(R.id.textView);
-        j.setVisibility(View.VISIBLE);
+//        View j = findViewById(R.id.textView);
+//        j.setVisibility(View.VISIBLE);
         View k = findViewById(R.id.lapText);
         k.setVisibility(View.VISIBLE);
+        View l = findViewById(R.id.bHorse);
+        l.setVisibility(View.VISIBLE);
+        View m = findViewById(R.id.gHorse);
+        m.setVisibility(View.VISIBLE);
+        View n = findViewById(R.id.rHorse);
+        n.setVisibility(View.VISIBLE);
     }
 
     public void onClickStart(View view) {
@@ -201,7 +217,15 @@ public class MainActivity extends Activity {
     // transfers horse data into string
     public String checkAllHorses(){
         String horses = "";
-        horses = "[" + String.valueOf(isChecked1()) + "]" + "[" + String.valueOf(isChecked2()) + "]" + "[" + String.valueOf(isChecked1()) + "]";
+        // if no horses are selected, it will chose the first one and run it
+        if(isChecked1() == false && isChecked2() == false && isChecked3() == false){
+            tvAppend(textView, "No Horses Entered");
+            horses = "[" + "true" + "]" + "[" + "false" + "]" +"[" + "false" + "]";
+        }
+        // else it will choose the horses selected
+        else {
+            horses = "[" + String.valueOf(isChecked1()) + "]" + "[" + String.valueOf(isChecked3()) + "]" + "[" + String.valueOf(isChecked2()) + "]";
+        }
         return horses;
     }
 
@@ -230,6 +254,8 @@ public class MainActivity extends Activity {
         }
         else{
             tvAppend(textView, "No Speed Entered");
+            // sets the default speed to medium if no input
+            speed = "[" + 475 + "]";
         }
         return speed;
     }
@@ -242,8 +268,8 @@ public class MainActivity extends Activity {
     // needs to send string of format String below to arduino for parsing
     public void onClickSend(View view) {
         //String string = editText.getText().toString();
-        //String string = "[true][false][true][400][5]";
-        String info = checkAllHorses() + checkSpeed() + numLaps();
+        //String info = "[true][false][true][400][5]!";
+        String info = checkAllHorses() + checkSpeed() + numLaps() + "!";
         serialPort.write(info.getBytes());
         tvAppend(textView, "\nData Sent : " + info + "\n");
 
@@ -256,8 +282,65 @@ public class MainActivity extends Activity {
 
     }
 
+    private void clearUI(){
+        // clears checked data
+        if(isChecked1()){
+            horse1.setChecked(false);
+        }
+        if(isChecked2()){
+            horse2.setChecked(false);
+        }
+        if(isChecked3()){
+            horse3.setChecked(false);
+        }
+        if(checkLOW()) {
+            slowB.setChecked(false);
+        }
+        if(checkMED()) {
+            mediumB.setChecked(false);
+        }
+        if(checkHIGH()) {
+            highB.setChecked(false);
+        }
+        // clears lap number
+        lapText.setText("");
+
+        // resets to just the begin button
+        View a = findViewById(R.id.buttonSend);
+        a.setVisibility(View.INVISIBLE);
+        View b = findViewById(R.id.buttonStart);
+        b.setVisibility(View.VISIBLE);
+        View c = findViewById(R.id.buttonClear);
+        c.setVisibility(View.INVISIBLE);
+        View d = findViewById(R.id.textView1);
+        d.setVisibility(View.INVISIBLE);
+        View e = findViewById(R.id.horse1);
+        e.setVisibility(View.INVISIBLE);
+        View f = findViewById(R.id.horse2);
+        f.setVisibility(View.INVISIBLE);
+        View g = findViewById(R.id.horse3);
+        g.setVisibility(View.INVISIBLE);
+        View h = findViewById(R.id.textView2);
+        h.setVisibility(View.INVISIBLE);
+        View i = findViewById(R.id.speedGroup);
+        i.setVisibility(View.INVISIBLE);
+        View j = findViewById(R.id.textView);
+        j.setVisibility(View.INVISIBLE);
+        View k = findViewById(R.id.lapText);
+        k.setVisibility(View.INVISIBLE);
+        View l = findViewById(R.id.bHorse);
+        l.setVisibility(View.INVISIBLE);
+        View m = findViewById(R.id.gHorse);
+        m.setVisibility(View.INVISIBLE);
+        View n = findViewById(R.id.rHorse);
+        n.setVisibility(View.INVISIBLE);
+    }
+
     public void onClickClear(View view) {
         textView.setText(" ");
+        clearUI();
+        View n = findViewById(R.id.buttonStart);
+        n.setVisibility(View.VISIBLE);
     }
 
     private void tvAppend(TextView tv, CharSequence text) {
