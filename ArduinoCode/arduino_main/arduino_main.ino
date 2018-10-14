@@ -18,9 +18,9 @@ class Player{
   long speed;
   boolean playing=true;
   int currLED=0;
-  long timeLeft;
+  long timeLeft=0;
   int lapsCompleted=0;
-  boolean winner;
+  boolean winner=false;
 };
 Player *red, *green, *blue;
 long speed;
@@ -110,9 +110,9 @@ void setup(){
 }
 
 void loop(){
+  static long timeLapsed=0;
+  long milli=millis();
   if(running){
-    long milli=millis();
-    static long timeLapsed=0;
     red->timeLeft-=(milli-timeLapsed);
     blue->timeLeft-=(milli-timeLapsed);
     green->timeLeft-=(milli-timeLapsed);
@@ -136,11 +136,10 @@ void loop(){
       green->currLED++;
       if((green->currLED)>=ring.numPixels()){
         green->currLED=0;
-        blue->lapsCompleted;
+        green->lapsCompleted++;
       }
       green->timeLeft+=(speed + ((rand()%200)-100));
     }
-    timeLapsed=milli;
     ring.clear();
     if((red->playing==true&&blue->playing==true&&green->playing==true)&&(red->currLED==blue->currLED&&red->currLED==green->currLED))ring.setPixelColor(red->currLED, WHITE);
     else if((red->playing==true&&blue->playing==true)&&(red->currLED==blue->currLED)){
@@ -178,30 +177,38 @@ void loop(){
     }
   }
   else if(finished){ 
-    if(blue->winner==true){
-      for(int i=0; i<ring.numPixels(); i++){
-        ring.setPixelColor(i, BLUE);
-        ring.show();
-        delay(100);
+    int victoryLaps=0;
+    while(victoryLaps<3){
+      if(blue->winner==true){
+        for(int i=0; i<ring.numPixels(); i++){
+          ring.setPixelColor(i, BLUE);
+          ring.show();
+          delay(100);
+        }
       }
-    }
-    else if(red->winner==true){
-      for(int i=0; i<ring.numPixels(); i++){
-        ring.setPixelColor(i, RED);
-        ring.show();
-        delay(100);
+      else if(red->winner==true){
+        for(int i=0; i<ring.numPixels(); i++){
+          ring.setPixelColor(i, RED);
+          ring.show();
+          delay(100);
+        }
       }
-    }
-    else{
-      for(int i=0; i<ring.numPixels(); i++){
-        ring.setPixelColor(i, GREEN);
-        ring.show();
-        delay(100);
+      else{
+        for(int i=0; i<ring.numPixels(); i++){
+          ring.setPixelColor(i, GREEN);
+          ring.show();
+          delay(100);
+        }
       }
+      ring.clear();
+      victoryLaps++;
     }
-    ring.clear();
+    finished=false;
   }
   else{
+    ring.clear();
+    ring.setPixelColor(0,WHITE);
+    ring.show();
     static String content="";
     char c;
     while(Serial.available()){
@@ -215,4 +222,5 @@ void loop(){
       content="";
     }
   }
+  timeLapsed=milli;
 }
